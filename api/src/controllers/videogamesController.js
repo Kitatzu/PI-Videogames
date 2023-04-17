@@ -8,7 +8,7 @@ async function getVideogames(req, res) {
     let videogamesInDb = await Videogames.findAll({
       include: [
         {
-          model: Platforms,
+          model: Genres,
           attributes: ["name"],
           through: { attributes: [] },
         },
@@ -87,10 +87,10 @@ async function getVideogameById(req, res) {
 
   try {
     if (idGame.includes("-")) {
-      let databaseGame = await Videogames.findByPk(id, {
+      let databaseGame = await Videogames.findByPk(idGame, {
         include: [
           {
-            model: Platforms,
+            model: Genres,
             attributes: ["name"],
             through: { attributes: [] },
           },
@@ -101,9 +101,6 @@ async function getVideogameById(req, res) {
           },
         ],
       });
-
-      databaseGame.genres = databaseGame.genres.map((ele) => ele.name);
-      databaseGame.platforms = databaseGame.platforms.map((ele) => ele.name);
 
       res.status(200).json(databaseGame);
     } else {
@@ -134,11 +131,60 @@ async function getVideogameById(req, res) {
   }
 }
 
-async function createVideogame(req, res) {}
+async function createVideogame(req, res) {
+  let {
+    background_image,
+    name,
+    released,
+    rating,
+    description_raw,
+    genres,
+    platforms,
+  } = req.body;
 
-async function deleteVideogame(req, res) {}
+  try {
+    const newGame = await Videogames.create({
+      background_image,
+      name,
+      description_raw,
+      released,
+      rating,
+    });
 
-async function updateVideogame(req, res) {}
+    const gameGenres = await Genres.findAll({ where: { name: genres } });
+    const gamePlatforms = await Platforms.findAll({
+      where: { name: platforms },
+    });
+
+    await newGame.addGenres(gameGenres);
+    await newGame.addPlatforms(gamePlatforms);
+
+    res.status(200).json(newGame);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}
+
+async function deleteVideogame(req, res) {
+  let { idGame } = req.params;
+
+  try {
+    let findGame = await Videogames.findByPk(idGame);
+    await findGame.destroy();
+    res.status(200).json(`the game ${findGame.name} is deleted`);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
+}
+
+async function updateVideogame(req, res) {
+  const {} = req.params;
+  const {} = req.body;
+
+  try {
+  } catch (error) {}
+}
 
 module.exports = {
   getVideogames,

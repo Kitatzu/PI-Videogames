@@ -12,14 +12,14 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    description: {
+    description_raw: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
     background_image: {
       type: DataTypes.STRING,
     },
-    releaseDate: {
+    released: {
       type: DataTypes.STRING,
     },
     rating: {
