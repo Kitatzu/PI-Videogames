@@ -1,7 +1,11 @@
 const { Router } = require("express");
-const { getVideogames } = require("../controllers/videogamesController.js");
+const {
+  getVideogames,
+  getVideogameById,
+} = require("../controllers/videogamesController.js");
 const router = Router();
 
-router.use("/", getVideogames);
+router.get("/", getVideogames);
+router.get("/:idGame", getVideogameById);
 
 module.exports = router;

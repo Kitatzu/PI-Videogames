@@ -2,6 +2,6 @@ const { Router } = require("express");
 const { getPlatforms } = require("../controllers/platformsController.js");
 const router = Router();
 
-router.use("/", getPlatforms);
+router.get("/", getPlatforms);
 
 module.exports = router;
