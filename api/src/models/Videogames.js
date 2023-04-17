@@ -1,7 +1,7 @@
-const { DataTypes, UUIDV4 } = require("sequelize");
+const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  sequelize.define("videogame", {
+  sequelize.define("videogames", {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -21,10 +21,6 @@ module.exports = (sequelize) => {
     },
     rating: {
       type: DataTypes.DECIMAL,
-    },
-    platforms: {
-      type: DataTypes.STRING,
-      allowNull: false,
     },
     inDb: {
       type: DataTypes.BOOLEAN,

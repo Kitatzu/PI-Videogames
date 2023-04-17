@@ -2,7 +2,7 @@ require("dotenv").config();
 const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
-const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME } = process.env;
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, API_KEY } = process.env;
 
 const sequelize = new Sequelize(
   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
@@ -35,15 +35,18 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Videogame, Genre } = sequelize.models;
+const { Videogames, Genres, Platforms } = sequelize.models;
 
 //relaciones
 
-Videogame.belongsToMany(Genre, { through: "Videogame_Genre" });
-Genre.belongsToMany(Videogame, { through: "Videogame_Genre" });
+Videogames.belongsToMany(Genres, { through: "Videogames_Genres" });
+Genres.belongsToMany(Videogames, { through: "Videogames_Genres" });
+Videogames.belongsToMany(Platforms, { through: "Videogames_Platforms" });
+Platforms.belongsToMany(Videogames, { through: "Videogames_Platforms" });
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
   conn: sequelize,
+  API_KEY,
   // para importart la conexión { conn } = require('./db.js');
 };
