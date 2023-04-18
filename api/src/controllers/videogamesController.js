@@ -179,11 +179,40 @@ async function deleteVideogame(req, res) {
 }
 
 async function updateVideogame(req, res) {
-  const {} = req.params;
-  const {} = req.body;
-
+  const { idGame } = req.params;
+  const {
+    name,
+    background_image,
+    description_raw,
+    released,
+    rating,
+    genres,
+    platforms,
+  } = req.body;
   try {
-  } catch (error) {}
+    let findGame = await Videogames.findByPk(idGame);
+    let findGenres = await Genres.findAll({ where: { name: genres } });
+    let findPlatforms = await Platforms.findAll({ where: { name: platforms } });
+
+    let update = await findGame.update({
+      name: name,
+      background_image: background_image,
+      description_raw: description_raw,
+      released: released,
+      rating: rating,
+    });
+
+    if (findGenres || findPlatforms) {
+      await update.addGenres(findGenres);
+      await update.addPlatforms(findPlatforms);
+      res.status(200).json(update);
+    } else {
+      res.status(200).json(update);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
 }
 
 module.exports = {
